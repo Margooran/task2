@@ -29,7 +29,7 @@ jobs:
         export_default_credentials: true
 
     - name: Set up Maven
-      run: mvn clean install  # Adjust this command to package your Java app, if needed (e.g., mvn package)
+      run: mvn clean install -f WeatherForecastService/pom.xml  # Adjust this command to package your Java app, if needed (e.g., mvn package)
 
     - name: Deploy to App Engine
       run: |

@@ -1,0 +1,38 @@
+name: Deploy to Google App Engine
+
+on:
+  push:
+    branches:
+      - main  # Triggers the workflow when changes are pushed to the main branch
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  deploy:
+    name: Deploy to Google App Engine
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3  # Checkout the code from your repository
+
+    - name: Set up JDK 17  # Set the JDK version based on your project
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'  # or 'zulu' or any preferred JDK distribution
+        java-version: '17'  # Adjust based on your Java version (11, 17, etc.)
+
+    - name: Install Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.banded-pager-438412-m8 }}  # Project ID stored in GitHub Secrets
+        service_account_key: ${{ secrets.GCP_SA_KEY }}  # Service account key stored in GitHub Secrets
+        export_default_credentials: true
+
+    - name: Set up Maven
+      run: mvn clean install  # Adjust this command to package your Java app, if needed (e.g., mvn package)
+
+    - name: Deploy to App Engine
+      run: |
+        gcloud app deploy --quiet
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
